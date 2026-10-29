@@ -1,0 +1,36 @@
+SAMPLE DOCUMENT FOR TESTING AGENT NARADA - FICTIONAL PEOPLE, NOT REAL UPES STAFF
+
+FACULTY DIRECTORY - SCHOOL OF COMPUTER SCIENCE - 2026-27
+All names, rooms and email addresses below are invented for testing.
+
+Dr. Ananya Rao - Professor and Head of Department, Computer Science
+Teaches: Artificial Intelligence (B.Tech Semester 5)
+Cabin: Block 2, Room 301. Office hours: Monday and Wednesday, 2 pm to 4 pm.
+Email: ananya.rao@example.edu
+
+Dr. Vikram Mehta - Associate Professor
+Teaches: Data Structures (B.Tech Semester 3)
+Cabin: Block 2, Room 214. Office hours: Tuesday and Thursday, 11 am to 1 pm.
+Email: vikram.mehta@example.edu
+
+Ms. Priya Nair - Assistant Professor
+Teaches: Database Management Systems (B.Tech Semester 3)
+Cabin: Block 2, Room 216. Office hours: Friday, 10 am to 12 noon.
+Email: priya.nair@example.edu
+
+Dr. Arjun Kapoor - Assistant Professor
+Teaches: Computer Networks (B.Tech Semester 5)
+Cabin: Block 2, Room 218. Office hours: Monday, 3 pm to 5 pm.
+Email: arjun.kapoor@example.edu
+
+Dr. Meera Iyer - Associate Professor and Exam Coordinator
+Teaches: Discrete Mathematics (B.Tech Semester 3)
+Cabin: Block 2, Room 305. Office hours: Wednesday, 10 am to 12 noon.
+Email: meera.iyer@example.edu
+Contact Dr. Meera Iyer for questions about the examination schedule.
+
+Mr. Rohan Das - Lab In-charge (Computer Labs 1 to 4)
+Cabin: Block 2, Lab 4. Available Monday to Friday, 9 am to 5 pm.
+Email: rohan.das@example.edu
+
+Department office: Block 2, Room 300. Phone extension 2300.

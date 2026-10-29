@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Super Admin | Agent Narada</title>
+    <link rel="icon" href="/static/img/Narada_logo.jpeg" />
+    <link rel="stylesheet" href="/static/style.css?v={{ asset_version }}" />
+  </head>
+
+  <body>
+    <div class="intro-veil" aria-hidden="true"></div>
+
+    <!-- ===== TOP BAR: branding ===== -->
+    <header class="app-header app-header--with-user">
+      <img
+        class="upes-logo"
+        src="/static/img/UPES-logo.svg"
+        alt="UPES"
+        width="175"
+        height="55"
+      />
+      <span class="header-divider" aria-hidden="true"></span>
+      <h1 class="product-name">Agent Narada</h1>
+
+      <div class="user-box" id="user-box" hidden>
+        <span class="user-name" id="user-name"></span>
+        <span class="role-chip" id="user-role"></span>
+        <button class="logout-button" id="logout-button" type="button">
+          Log out
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== THE CONTROL PANEL: sections on the left, content on the right =====
+         Django sends this page to the Super Admin only. There is no
+         chatbot here: this role administers the system. -->
+    <div class="console">
+      <!-- The section list. header.js fills it in for the user's role. -->
+      <nav class="side-nav" id="side-nav" aria-label="Sections"></nav>
+
+      <!-- data-stats-url tells dashboard.js where to fetch the numbers. -->
+      <main class="manage" id="dashboard" data-stats-url="/api/dashboard/super-admin/">
+        <div class="manage-inner">
+          <div>
+            <h2 class="page-title">Dashboard Overview</h2>
+            <p class="page-intro">System administration.</p>
+          </div>
+
+          <p class="form-error" id="stats-error" role="alert" hidden></p>
+
+          <!-- Each number's place is marked with data-stat. dashboard.js
+               replaces the dash with the value Django sends. -->
+          <section class="panel">
+            <h3 class="panel-title">Users</h3>
+            <div class="stat-grid">
+              <div class="stat stat--main">
+                <span class="stat-number" data-stat="users.total">-</span>
+                <span class="stat-label">Total users</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number" data-stat="users.students">-</span>
+                <span class="stat-label">Students</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number" data-stat="users.teaching_staff">-</span>
+                <span class="stat-label">Teaching staff</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number" data-stat="users.non_teaching_staff">-</span>
+                <span class="stat-label">Non-teaching staff</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number" data-stat="users.admins">-</span>
+                <span class="stat-label">Admins</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number" data-stat="users.super_admins">-</span>
+                <span class="stat-label">Super admins</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3 class="panel-title">Documents</h3>
+            <div class="stat-grid">
+              <div class="stat stat--main">
+                <span class="stat-number" data-stat="documents.total">-</span>
+                <span class="stat-label">Total documents</span>
+              </div>
+              <div class="stat stat--pending">
+                <span class="stat-number" data-stat="documents.pending">-</span>
+                <span class="stat-label">Pending approval</span>
+              </div>
+              <div class="stat stat--approved">
+                <span class="stat-number" data-stat="documents.approved">-</span>
+                <span class="stat-label">Approved</span>
+              </div>
+              <div class="stat stat--rejected">
+                <span class="stat-number" data-stat="documents.rejected">-</span>
+                <span class="stat-label">Rejected</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="/static/api.js?v={{ asset_version }}"></script>
+    <script src="/static/header.js?v={{ asset_version }}"></script>
+    <script src="/static/dashboard.js?v={{ asset_version }}"></script>
+  </body>
+</html>

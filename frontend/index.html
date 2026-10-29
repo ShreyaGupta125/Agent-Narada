@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Narada </title>
+    <link rel="icon" href="/static/img/Narada_logo.jpeg" />
+    <link rel="stylesheet" href="/static/style.css?v={{ asset_version }}" />
+  </head>
+
+  <body>
+    <!-- Intro veil. Covers the page for a moment on load, then fades away.
+         It is pure CSS and never blocks clicks, so it cannot get stuck. -->
+    <div class="intro-veil" aria-hidden="true"></div>
+
+    <!-- ===== TOP BAR: branding ===== -->
+    <header class="app-header app-header--with-user">
+      <!-- Official UPES logo (SVG, transparent, unmodified artwork).
+           Only the height is set in CSS; width stays automatic so the
+           official proportions are never distorted. -->
+      <img
+        class="upes-logo"
+        src="/static/img/UPES-logo.svg"
+        alt="UPES"
+        width="175"
+        height="55"
+      />
+      <span class="header-divider" aria-hidden="true"></span>
+      <h1 class="product-name">Agent Narada</h1>
+
+      <!-- Who is logged in. Hidden until JavaScript has asked Django. -->
+      <div class="user-box" id="user-box" hidden>
+        <span class="user-name" id="user-name"></span>
+        <span class="role-chip" id="user-role"></span>
+        <button class="logout-button" id="logout-button" type="button">
+          Log out
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== BELOW THE HEADER: recent chats on the left, the chat on the right ===== -->
+    <div class="chat-layout">
+      <!-- The user's own conversations from the last 7 days. script.js
+           fills the list from Django, which sends only this user's chats. -->
+      <aside class="side-nav history" aria-label="Recent chats">
+        <button class="secondary-button new-chat-button" id="new-chat-button" type="button">
+          + New chat
+        </button>
+        <p class="side-heading">Last 7 days</p>
+        <div class="history-list" id="history-list"></div>
+        <p class="history-empty" id="history-empty" hidden>No chats yet.</p>
+        <!-- Deletes every conversation of this user, after a confirmation.
+             Shown only when there is something to delete. -->
+        <button class="clear-history-button" id="clear-history-button" type="button" hidden>
+          Clear all history
+        </button>
+      </aside>
+
+      <div class="chat-column">
+        <!-- ===== MIDDLE: the conversation ===== -->
+        <main class="chat">
+          <!-- Shown before the first question. JavaScript hides this later. -->
+          <section class="welcome" id="welcome">
+            <h2 class="hero-title">AGENT NARADA</h2>
+            <span class="hero-rule" aria-hidden="true"></span>
+            <p class="hero-tagline">Smart University AI Assistant</p>
+          </section>
+
+          <!-- Message bubbles are added here by JavaScript. Starts empty. -->
+          <div class="messages" id="messages" role="log" aria-live="polite"></div>
+        </main>
+
+        <!-- ===== BOTTOM: where the user types ===== -->
+        <footer class="composer">
+          <form class="composer-form" id="chat-form">
+            <input
+              class="composer-input"
+              id="user-input"
+              type="text"
+              placeholder="Ask Narada anything..."
+              aria-label="Your question"
+              autocomplete="off"
+            />
+            <button class="composer-button" id="send-button" type="submit">
+              Send
+            </button>
+          </form>
+        </footer>
+      </div>
+    </div>
+
+    <script src="/static/api.js?v={{ asset_version }}"></script>
+    <script src="/static/header.js?v={{ asset_version }}"></script>
+    <script src="/static/script.js?v={{ asset_version }}"></script>
+  </body>
+</html>

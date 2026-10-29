@@ -1,0 +1,30 @@
+SAMPLE DOCUMENT FOR TESTING AGENT NARADA - FICTIONAL FIGURES, NOT OFFICIAL UPES FEES
+
+FEE STRUCTURE - EVEN SEMESTER (JANUARY TO MAY 2027)
+
+1. Tuition fee per semester
+B.Tech (all branches): Rs 2,10,000.
+BBA: Rs 1,45,000.
+B.Des: Rs 1,90,000.
+
+2. Other fees per semester
+Examination fee: Rs 4,500.
+Library and laboratory fee: Rs 6,000.
+Hostel fee (twin sharing, with mess): Rs 95,000.
+Hostel fee (single room, with mess): Rs 1,25,000.
+Transport fee (optional): Rs 18,000.
+
+3. Due date
+The fee for the even semester must be paid by 15 January 2027.
+
+4. Late fee
+A late fee of Rs 100 per day is charged from 16 January 2027. After 31 January 2027 the student's registration for the semester is put on hold.
+
+5. How to pay
+Fees are paid online on the student portal, by net banking, UPI or card. Payment by cash is not accepted.
+
+6. Scholarships
+Merit scholarship holders pay the tuition fee after the scholarship is deducted. Scholarship queries go to the Scholarship Cell, Block 1, Room 110, email scholarship.cell@example.edu
+
+7. Refunds
+A student who withdraws before 31 January 2027 gets back 80% of the tuition fee. No refund is given after that date.

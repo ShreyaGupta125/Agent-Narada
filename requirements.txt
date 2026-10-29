@@ -1,0 +1,22 @@
+# Agent Narada - Python packages
+# Install with:  pip install -r requirements.txt
+# (run this only after the virtual environment is activated)
+
+# Web framework: authentication, roles, permissions, database, APIs
+Django==5.2.17
+
+# Helps Django build JSON APIs for the frontend (chat, login, documents)
+djangorestframework==3.18.1
+
+# Reads the text out of uploaded PDF files
+pypdf==6.19.0
+
+# Opens old Word (.doc) files, so their text can be read.
+# (.docx and .odt files are read with Python's built-in zipfile and xml.)
+olefile==0.47
+
+# The three packages below are installed automatically with Django.
+# They are listed so every machine gets exactly the same versions.
+asgiref==3.12.1
+sqlparse==0.6.0
+tzdata==2026.4

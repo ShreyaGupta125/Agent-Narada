@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documents | Agent Narada</title>
+    <link rel="icon" href="/static/img/Narada_logo.jpeg" />
+    <link rel="stylesheet" href="/static/style.css?v={{ asset_version }}" />
+  </head>
+
+  <body>
+    <div class="intro-veil" aria-hidden="true"></div>
+
+    <!-- ===== TOP BAR: branding ===== -->
+    <header class="app-header app-header--with-user">
+      <img
+        class="upes-logo"
+        src="/static/img/UPES-logo.svg"
+        alt="UPES"
+        width="175"
+        height="55"
+      />
+      <span class="header-divider" aria-hidden="true"></span>
+      <h1 class="product-name">Agent Narada</h1>
+
+      <div class="user-box" id="user-box" hidden>
+        <span class="user-name" id="user-name"></span>
+        <span class="role-chip" id="user-role"></span>
+        <button class="logout-button" id="logout-button" type="button">
+          Log out
+        </button>
+      </div>
+    </header>
+
+    <!-- Django sends this page to Admins and the Super Admin only.
+         An Admin sees their own documents ("My Documents"); the Super
+         Admin sees everyone's and can approve or reject them
+         ("Document Approval"). documents.js sets the title to match. -->
+    <div class="console">
+      <!-- The section list. header.js fills it in for the user's role. -->
+      <nav class="side-nav" id="side-nav" aria-label="Sections"></nav>
+
+      <main class="manage">
+        <div class="manage-inner">
+          <div>
+            <h2 class="page-title" id="documents-title">Documents</h2>
+            <p class="page-intro" id="documents-intro"></p>
+          </div>
+
+          <!-- Choose which documents to show. -->
+          <div class="filter-row" id="filter-row" role="group" aria-label="Show documents">
+            <button class="filter-button" type="button" data-status="PENDING">Pending</button>
+            <button class="filter-button" type="button" data-status="APPROVED">Approved</button>
+            <button class="filter-button" type="button" data-status="REJECTED">Rejected</button>
+            <button class="filter-button" type="button" data-status="">All</button>
+          </div>
+
+          <p class="form-error" id="documents-error" role="alert" hidden></p>
+          <p class="form-success" id="documents-success" role="status" hidden></p>
+
+          <section class="panel">
+            <div class="table-scroll" id="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Document</th>
+                    <!-- Shown only to the Super Admin. -->
+                    <th id="uploader-heading" hidden>Uploaded by</th>
+                    <th>Uploaded</th>
+                    <th>Who may read</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <!-- Rows are added here by JavaScript. -->
+                <tbody id="document-rows"></tbody>
+              </table>
+            </div>
+            <p class="empty-note" id="empty-note" hidden>No documents to show.</p>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="/static/api.js?v={{ asset_version }}"></script>
+    <script src="/static/header.js?v={{ asset_version }}"></script>
+    <script src="/static/documents.js?v={{ asset_version }}"></script>
+  </body>
+</html>

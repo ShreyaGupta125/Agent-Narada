@@ -1,0 +1,14 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Large downloads (see README.txt for where to get them)
+models/
+tools/llama.cpp/
+tools/*.log
+
+# Local data and secrets
+backend/.secret_key
+backend/db.sqlite3
+backend/media/

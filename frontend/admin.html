@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | Agent Narada</title>
+    <link rel="icon" href="/static/img/Narada_logo.jpeg" />
+    <link rel="stylesheet" href="/static/style.css?v={{ asset_version }}" />
+  </head>
+
+  <body>
+    <div class="intro-veil" aria-hidden="true"></div>
+
+    <!-- ===== TOP BAR: branding ===== -->
+    <header class="app-header app-header--with-user">
+      <img
+        class="upes-logo"
+        src="/static/img/UPES-logo.svg"
+        alt="UPES"
+        width="175"
+        height="55"
+      />
+      <span class="header-divider" aria-hidden="true"></span>
+      <h1 class="product-name">Agent Narada</h1>
+
+      <div class="user-box" id="user-box" hidden>
+        <span class="user-name" id="user-name"></span>
+        <span class="role-chip" id="user-role"></span>
+        <button class="logout-button" id="logout-button" type="button">
+          Log out
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== DOCUMENT MANAGEMENT: sections on the left, content on the right =====
+         Django sends this page to Admins only. There is no chatbot
+         here: this role manages university documents. -->
+    <div class="console">
+      <!-- The section list. header.js fills it in for the user's role. -->
+      <nav class="side-nav" id="side-nav" aria-label="Sections"></nav>
+
+      <!-- data-stats-url tells dashboard.js where to fetch the numbers. -->
+      <main class="manage" id="dashboard" data-stats-url="/api/dashboard/admin/">
+        <div class="manage-inner">
+          <div>
+            <h2 class="page-title">Dashboard Overview</h2>
+            <p class="page-intro">University document management.</p>
+          </div>
+
+          <p class="form-error" id="stats-error" role="alert" hidden></p>
+
+          <section class="panel">
+            <h3 class="panel-title">My documents</h3>
+            <div class="stat-grid">
+              <div class="stat stat--main">
+                <span class="stat-number" data-stat="documents.total">-</span>
+                <span class="stat-label">Documents uploaded</span>
+              </div>
+              <div class="stat stat--pending">
+                <span class="stat-number" data-stat="documents.pending">-</span>
+                <span class="stat-label">Pending approval</span>
+              </div>
+              <div class="stat stat--approved">
+                <span class="stat-number" data-stat="documents.approved">-</span>
+                <span class="stat-label">Approved</span>
+              </div>
+              <div class="stat stat--rejected">
+                <span class="stat-number" data-stat="documents.rejected">-</span>
+                <span class="stat-label">Rejected</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel">
+            <h3 class="panel-title">How approval works</h3>
+            <p class="panel-text">
+              Every document you upload waits as Pending. It becomes part of
+              Agent Narada's knowledge only after the Super Admin approves it.
+              If it is rejected, the reason is shown with the document.
+            </p>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="/static/api.js?v={{ asset_version }}"></script>
+    <script src="/static/header.js?v={{ asset_version }}"></script>
+    <script src="/static/dashboard.js?v={{ asset_version }}"></script>
+  </body>
+</html>

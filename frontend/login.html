@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log in | Agent Narada</title>
+    <link rel="icon" href="/static/img/Narada_logo.jpeg" />
+    <link rel="stylesheet" href="/static/style.css?v={{ asset_version }}" />
+  </head>
+
+  <body>
+    <div class="intro-veil" aria-hidden="true"></div>
+
+    <!-- ===== TOP BAR: branding (same as the chat page) ===== -->
+    <header class="app-header">
+      <img
+        class="upes-logo"
+        src="/static/img/UPES-logo.svg"
+        alt="UPES"
+        width="175"
+        height="55"
+      />
+      <span class="header-divider" aria-hidden="true"></span>
+      <h1 class="product-name">Agent Narada</h1>
+    </header>
+
+    <!-- ===== MIDDLE: the login card ===== -->
+    <main class="login">
+      <section class="login-card">
+        <h2 class="hero-title">Welcome to Agent Narada</h2>
+        <span class="hero-rule" aria-hidden="true"></span>
+        <p class="hero-tagline">Login</p>
+
+        <form class="login-form" id="login-form">
+          <label class="form-field">
+            <span class="form-label">Username</span>
+            <input
+              class="composer-input"
+              id="username"
+              type="text"
+              autocomplete="username"
+              required
+              autofocus
+            />
+          </label>
+
+          <label class="form-field">
+            <span class="form-label">Password</span>
+            <input
+              class="composer-input"
+              id="password"
+              type="password"
+              autocomplete="current-password"
+              required
+            />
+          </label>
+
+          <!-- Filled in by JavaScript when a login attempt fails. -->
+          <p class="form-error" id="login-error" role="alert" hidden></p>
+
+          <button class="composer-button" id="login-button" type="submit">
+            Log in
+          </button>
+        </form>
+
+      </section>
+    </main>
+
+    <script src="/static/api.js?v={{ asset_version }}"></script>
+    <script src="/static/login.js?v={{ asset_version }}"></script>
+  </body>
+</html>

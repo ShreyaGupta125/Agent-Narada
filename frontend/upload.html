@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload document | Agent Narada</title>
+    <link rel="icon" href="/static/img/Narada_logo.jpeg" />
+    <link rel="stylesheet" href="/static/style.css?v={{ asset_version }}" />
+  </head>
+
+  <body>
+    <div class="intro-veil" aria-hidden="true"></div>
+
+    <!-- ===== TOP BAR: branding ===== -->
+    <header class="app-header app-header--with-user">
+      <img
+        class="upes-logo"
+        src="/static/img/UPES-logo.svg"
+        alt="UPES"
+        width="175"
+        height="55"
+      />
+      <span class="header-divider" aria-hidden="true"></span>
+      <h1 class="product-name">Agent Narada</h1>
+
+      <div class="user-box" id="user-box" hidden>
+        <span class="user-name" id="user-name"></span>
+        <span class="role-chip" id="user-role"></span>
+        <button class="logout-button" id="logout-button" type="button">
+          Log out
+        </button>
+      </div>
+    </header>
+
+    <!-- Django sends this page to Admins and the Super Admin only. -->
+    <div class="console">
+      <!-- The section list. header.js fills it in for the user's role. -->
+      <nav class="side-nav" id="side-nav" aria-label="Sections"></nav>
+
+      <main class="manage">
+        <div class="manage-inner">
+          <div>
+            <h2 class="page-title">Upload Document</h2>
+            <!-- upload.js writes what will happen to the upload here:
+                 it waits for approval (Admin) or is approved at once
+                 (Super Admin). Django decides which, not this page. -->
+            <p class="page-intro" id="upload-intro"></p>
+          </div>
+
+          <section class="panel">
+            <h3 class="panel-title">Document details</h3>
+
+            <form class="user-form" id="upload-form">
+              <label class="form-field form-wide">
+                <span class="form-label">Title</span>
+                <input class="composer-input" id="doc-title" type="text" maxlength="200" required />
+              </label>
+
+              <label class="form-field form-wide">
+                <span class="form-label">Description (optional)</span>
+                <textarea class="composer-input" id="doc-description" rows="3"></textarea>
+              </label>
+
+              <label class="form-field form-wide">
+                <span class="form-label">File (PDF, Word .docx or .doc, OpenDocument .odt, or TXT; up to 10 MB)</span>
+                <!-- accept only helps the user pick the right file.
+                     Django checks the file again after it arrives, and
+                     reads its text before the upload counts as done. -->
+                <input
+                  class="file-input"
+                  id="doc-file"
+                  type="file"
+                  accept=".pdf,.docx,.doc,.odt,.txt"
+                  required
+                />
+              </label>
+
+              <fieldset class="check-group form-wide">
+                <legend class="form-label">Who may get answers from this document?</legend>
+                <label class="check">
+                  <input type="checkbox" id="for-students" /> Students
+                </label>
+                <label class="check">
+                  <input type="checkbox" id="for-teaching-staff" /> Teaching staff
+                </label>
+                <label class="check">
+                  <input type="checkbox" id="for-non-teaching-staff" /> Non-teaching staff
+                </label>
+              </fieldset>
+
+              <!-- Filled in by JavaScript after each attempt. -->
+              <p class="form-error form-wide" id="upload-error" role="alert" hidden></p>
+              <p class="form-success form-wide" id="upload-success" role="status" hidden></p>
+
+              <div class="form-actions form-wide">
+                <button class="composer-button" id="upload-button" type="submit">
+                  Upload document
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="/static/api.js?v={{ asset_version }}"></script>
+    <script src="/static/header.js?v={{ asset_version }}"></script>
+    <script src="/static/upload.js?v={{ asset_version }}"></script>
+  </body>
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage users | Agent Narada</title>
+    <link rel="icon" href="/static/img/Narada_logo.jpeg" />
+    <link rel="stylesheet" href="/static/style.css?v={{ asset_version }}" />
+  </head>
+
+  <body>
+    <div class="intro-veil" aria-hidden="true"></div>
+
+    <!-- ===== TOP BAR: branding (same as the chat page) ===== -->
+    <header class="app-header app-header--with-user">
+      <img
+        class="upes-logo"
+        src="/static/img/UPES-logo.svg"
+        alt="UPES"
+        width="175"
+        height="55"
+      />
+      <span class="header-divider" aria-hidden="true"></span>
+      <h1 class="product-name">Agent Narada</h1>
+
+      <div class="user-box" id="user-box" hidden>
+        <span class="user-name" id="user-name"></span>
+        <span class="role-chip" id="user-role"></span>
+        <button class="logout-button" id="logout-button" type="button">
+          Log out
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== THE CONTROL PANEL: sections on the left, content on the right ===== -->
+    <div class="console">
+      <!-- The section list. header.js fills it in for the user's role. -->
+      <nav class="side-nav" id="side-nav" aria-label="Sections"></nav>
+
+    <!-- The account form, then the list of accounts.
+         One form does two jobs. Normally it adds an account; after
+         "Modify" is clicked on a row it edits that account instead. -->
+    <main class="manage">
+      <div class="manage-inner">
+        <h2 class="page-title">User Management</h2>
+
+        <section class="panel" id="form-panel">
+          <h3 class="panel-title" id="form-title">Add an account</h3>
+
+          <form class="user-form" id="user-form">
+            <label class="form-field">
+              <span class="form-label">Username</span>
+              <input
+                class="composer-input"
+                id="new-username"
+                type="text"
+                autocomplete="off"
+                required
+              />
+            </label>
+
+            <label class="form-field">
+              <span class="form-label">Role</span>
+              <!-- The backend checks the role again; this list only
+                   offers the five valid choices. -->
+              <select class="composer-input" id="new-role" required>
+                <option value="STUDENT">Student</option>
+                <option value="TEACHING_STAFF">Teaching Staff</option>
+                <option value="NON_TEACHING_STAFF">Non-Teaching Staff</option>
+                <option value="ADMIN">Admin</option>
+                <option value="SUPER_ADMIN">Super Admin</option>
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span class="form-label">First name</span>
+              <input class="composer-input" id="new-first-name" type="text" autocomplete="off" />
+            </label>
+
+            <label class="form-field">
+              <span class="form-label">Last name</span>
+              <input class="composer-input" id="new-last-name" type="text" autocomplete="off" />
+            </label>
+
+            <label class="form-field">
+              <span class="form-label">Email</span>
+              <input class="composer-input" id="new-email" type="email" autocomplete="off" />
+            </label>
+
+            <label class="form-field">
+              <span class="form-label" id="password-label">Password</span>
+              <input
+                class="composer-input"
+                id="new-password"
+                type="password"
+                autocomplete="new-password"
+                required
+              />
+            </label>
+
+            <label class="form-field">
+              <span class="form-label">Status</span>
+              <!-- An inactive account cannot log in. -->
+              <select class="composer-input" id="new-status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </label>
+
+            <!-- Filled in by JavaScript after each attempt. -->
+            <p class="form-error form-wide" id="user-form-error" role="alert" hidden></p>
+            <p class="form-success form-wide" id="user-form-success" role="status" hidden></p>
+
+            <div class="form-actions form-wide">
+              <button class="composer-button" id="save-button" type="submit">
+                Add account
+              </button>
+              <!-- Shown only while an account is being modified. -->
+              <button class="secondary-button" id="cancel-button" type="button" hidden>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel">
+          <h3 class="panel-title">All accounts</h3>
+
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <!-- Rows are added here by JavaScript. -->
+              <tbody id="user-rows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+    </div>
+
+    <script src="/static/api.js?v={{ asset_version }}"></script>
+    <script src="/static/header.js?v={{ asset_version }}"></script>
+    <script src="/static/users.js?v={{ asset_version }}"></script>
+  </body>
+</html>

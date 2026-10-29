@@ -1,0 +1,1409 @@
+/* ============================================================
+   AGENT NARADA — stylesheet
+   Colours follow the UPES visual identity (upes.ac.in).
+   Sections:
+     1. Design tokens (variables)
+     2. Reset / base
+     3. Page layout
+     4. Ambient background layers (faded Narada logo + glow)
+     5. Header (UPES institutional bar)
+     6. Conversation area
+     7. Hero / empty state
+     8. Message bubbles
+     9. Composer (input + send button)
+    10. Login page and user box
+    11. Dashboard pages
+    12. Keyframes
+    13. Responsive rules
+    14. Reduced motion
+   ============================================================ */
+
+/* ---------- 1. DESIGN TOKENS ------------------------------
+   UPES palette, sampled from the official university website.
+   Change a value here and it updates everywhere. */
+:root {
+  --color-primary: #107fce; /* UPES navy — headings, buttons */
+  --color-primary-dark: #0b1f52; /* deeper navy — hover states */
+  --color-accent: #ef4637; /* UPES red — small accents only */
+  --color-gold: #f9ac19; /* UPES gold — reserved for later use */
+
+  --color-bg: #f7f6f2; /* warm institutional off-white */
+  --color-surface: #ffffff;
+  --color-text: #212529;
+  --color-text-muted: #5f6b7a;
+  --color-text-inverse: #ffffff;
+  --color-border: #e0e4ea;
+
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+
+  --radius: 12px;
+  --content-width: 760px;
+
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  /* One shared easing curve. Starts quickly, settles gently —
+     this is what makes motion feel considered rather than mechanical. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- 2. RESET / BASE ------------------------------- */
+
+/* Include padding and border in an element's stated width.
+   Without this, width:100% + padding overflows the screen. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+/* Elements hidden by JavaScript (element.hidden = true) must
+   stay hidden even if a rule below gives them a display value. */
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- 3. PAGE LAYOUT --------------------------------
+   The page is one vertical column filling the whole screen:
+     header  -> natural height
+     main    -> takes all remaining space, scrolls
+     footer  -> natural height, stays at the bottom */
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh; /* correct height on mobile browsers */
+  overflow: hidden; /* the .chat area scrolls, not the page */
+}
+
+/* ---------- 4. AMBIENT BACKGROUND LAYERS ------------------
+   Two decorative layers sit behind everything. Both are pseudo-
+   elements, so they add nothing to the HTML, and both are fixed
+   and non-interactive. Only transform and opacity are animated,
+   which the browser can handle without re-drawing the page. */
+
+/* The faded Narada logo, cropped to the emblem so its own wordmark
+   never competes with the AGENT NARADA title in front of it. */
+body::before {
+  content: "";
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  width: min(820px, 118vmin);
+  aspect-ratio: 1;
+  background-image: url("img/Narada_logo.jpeg");
+  background-repeat: no-repeat;
+  background-size: 165%;
+  background-position: 50% 8%;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  will-change: transform, opacity;
+  /* 44 seconds for one loop: slow enough to read as atmosphere,
+     not as an animation the eye follows. */
+  animation: narada-drift 44s var(--ease-out) infinite;
+}
+
+/* Soft UPES-coloured glows, drifting on a different rhythm so the
+   two layers never repeat as a visible pattern. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -25%;
+  z-index: -2;
+  pointer-events: none;
+  background-image: radial-gradient(
+      34% 34% at 22% 26%,
+      rgba(11, 42, 111, 0.13),
+      transparent 70%
+    ),
+    radial-gradient(30% 30% at 78% 74%, rgba(239, 70, 55, 0.08), transparent 70%);
+  will-change: transform;
+  animation: ambient-drift 38s ease-in-out infinite alternate;
+}
+
+/* Intro veil: a plain sheet of the page colour that fades away.
+   pointer-events: none from the very first frame means the user can
+   type immediately — the intro is shown, never enforced. */
+.intro-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--color-bg);
+  pointer-events: none;
+  animation: veil-out 0.85s 0.15s var(--ease-out) forwards;
+}
+
+/* ---------- 5. HEADER -------------------------------------
+   A white institutional bar, matching upes.ac.in. The UPES
+   wordmark is dark navy, so it needs a light background. */
+.app-header {
+  flex-shrink: 0; /* never let the header be squeezed */
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 10px var(--space-lg);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* Only the height is fixed. `width: auto` lets the browser work out
+   the matching width, so the official logo is never stretched.
+   Its entrance is a plain fade — institutional marks do not bounce. */
+.upes-logo {
+  display: block;
+  height: 38px;
+  width: auto;
+  animation: fade-in 0.7s 0.1s var(--ease-out) both;
+}
+
+.header-divider {
+  width: 1px;
+  height: 26px;
+  background: var(--color-border);
+  animation: fade-in 0.7s 0.16s var(--ease-out) both;
+}
+
+.product-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--color-primary);
+  animation: rise-in 0.7s 0.2s var(--ease-out) both;
+}
+
+/* ---------- 6. CONVERSATION AREA -------------------------- */
+
+/* The chat page under the header: the recent-chats panel on the left
+   (it uses the dashboards' .side-nav look), the conversation and the
+   composer on the right. min-height: 0 lets each part scroll on its own. */
+.chat-layout {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.chat-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.new-chat-button {
+  flex-shrink: 0;
+  margin-bottom: var(--space-md);
+  padding: 9px 12px;
+  font-size: 0.92rem;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* One past conversation: its title, and a small delete button. */
+.history-row {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: background-color 0.2s var(--ease-out);
+}
+
+.history-row:hover {
+  background: var(--color-bg);
+}
+
+/* The title. It is cut with "..." if it is too long. */
+.history-item {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 4px 9px 12px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: inherit;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.history-item:focus-visible,
+.history-delete:focus-visible,
+.clear-history-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* The delete button appears when the row is pointed at or focused with
+   the keyboard, so the list stays calm. */
+.history-delete {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  margin-right: 4px;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: inherit;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s var(--ease-out), background-color 0.15s var(--ease-out);
+}
+
+.history-row:hover .history-delete,
+.history-row:focus-within .history-delete {
+  opacity: 0.75;
+}
+
+.history-delete:hover {
+  opacity: 1;
+  color: #a12318;
+  background: #fdecea;
+}
+
+/* A touch screen has no "pointing at": the button is always shown there. */
+@media (hover: none) {
+  .history-delete {
+    opacity: 0.75;
+  }
+}
+
+/* The conversation on screen now. */
+.history-row--active,
+.history-row--active:hover {
+  color: var(--color-text-inverse);
+  background: var(--color-primary);
+}
+
+.clear-history-button {
+  flex-shrink: 0;
+  margin-top: var(--space-md);
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: #a12318;
+  background: none;
+  border: 1px solid #f5c2bd;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.clear-history-button:hover {
+  background: #fdecea;
+}
+
+/* While an answer is on its way, switching or deleting chats is paused. */
+.history-item:disabled,
+.history-delete:disabled,
+.clear-history-button:disabled,
+.new-chat-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.history-empty {
+  margin: 0;
+  padding: 0 12px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.chat {
+  flex: 1; /* fill all space between header and footer */
+  overflow-y: auto; /* scroll inside here, not the whole page */
+  padding: var(--space-lg);
+  display: flex; /* lets the hero stretch and self-centre */
+  flex-direction: column;
+}
+
+/* ---------- 7. HERO / EMPTY STATE -------------------------
+   Fills the conversation area and centres itself in it, so the
+   product identity sits mid-screen until the first question.
+   Children appear one after another, each slightly later. */
+.welcome {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(1.9rem, 5vw, 2.7rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--color-primary);
+  animation: rise-in 0.8s 0.25s var(--ease-out) both;
+}
+
+/* Short red rule — the one place the UPES accent colour appears.
+   Purely decorative, so it carries no information on its own.
+   It draws itself outward from the centre. */
+.hero-rule {
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin: var(--space-md) 0;
+  background: var(--color-accent);
+  animation: draw-rule 0.7s 0.35s var(--ease-out) both;
+}
+
+.hero-tagline {
+  margin: 0;
+  font-size: clamp(1rem, 2.4vw, 1.15rem);
+  font-weight: 600;
+  color: var(--color-text);
+  animation: rise-in 0.8s 0.4s var(--ease-out) both;
+}
+
+.hero-text {
+  margin: var(--space-sm) auto 0;
+  max-width: 48ch;
+  color: var(--color-text-muted);
+  animation: rise-in 0.8s 0.5s var(--ease-out) both;
+}
+
+/* ---------- 8. MESSAGE BUBBLES ---------------------------- */
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+/* Shared by every bubble.
+   The animation runs automatically whenever JavaScript inserts a new
+   bubble — no animation code is needed in script.js. */
+.message {
+  max-width: 80%;
+  padding: 10px var(--space-md);
+  border-radius: var(--radius);
+  white-space: pre-wrap; /* keep the user's line breaks */
+  overflow-wrap: anywhere; /* long words wrap instead of overflowing */
+  animation: message-in 0.42s var(--ease-out) both;
+}
+
+/* The user's own message: UPES navy, aligned right. */
+.message--user {
+  align-self: flex-end;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-bottom-right-radius: 4px;
+}
+
+/* Narada's reply: white card, aligned left.
+   It lands a moment after the question, so the pair reads as a
+   short exchange rather than both appearing at once. */
+.message--assistant {
+  align-self: flex-start;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-bottom-left-radius: 4px;
+  animation-delay: 0.14s;
+}
+
+/* Shown while the backend is working on the answer. */
+.message--pending .message-text {
+  color: var(--color-text-muted);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+/* The backend refused the question, or could not be reached. */
+.message--error {
+  color: #a12318;
+  background: #fdecea;
+  border-color: #f5c2bd;
+}
+
+/* The documents an answer came from, under the answer. */
+.message-sources {
+  display: block;
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+}
+
+/* Small label above each bubble ("You" / "Agent Narada"). */
+.message-sender {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+/* ---------- 9. COMPOSER ----------------------------------- */
+.composer {
+  flex-shrink: 0;
+  position: relative;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  animation: lift-in 0.8s 0.55s var(--ease-out) both;
+}
+
+.composer-form {
+  display: flex;
+  gap: var(--space-sm);
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.composer-input {
+  flex: 1; /* take all leftover width */
+  min-width: 0; /* allow shrinking below its default size */
+  padding: 12px var(--space-md);
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  transition: border-color 0.25s var(--ease-out),
+    box-shadow 0.25s var(--ease-out), background-color 0.25s var(--ease-out);
+}
+
+.composer-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.composer-input:hover {
+  border-color: #c9d0da;
+}
+
+/* The focus ring is drawn with box-shadow so it can fade in smoothly.
+   It stays clearly visible, which keyboard users depend on. */
+.composer-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px rgba(11, 42, 111, 0.15);
+}
+
+.composer-button {
+  padding: 12px var(--space-lg);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-inverse);
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out),
+    background-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+
+/* A 1px lift and a soft shadow: enough to feel responsive,
+   small enough that nothing on the page moves around it. */
+.composer-button:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(11, 42, 111, 0.22);
+}
+
+.composer-button:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: none;
+}
+
+.composer-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.composer-button:disabled {
+  background: var(--color-text-muted);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---------- 10. LOGIN PAGE AND USER BOX -------------------- */
+
+/* Right-hand side of the header: name, role and the logout button.
+   margin-left: auto pushes the box to the far right. */
+.user-box {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+  animation: fade-in 0.4s var(--ease-out) both;
+}
+
+.user-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.role-chip {
+  padding: 2px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+}
+
+.logout-button {
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+
+.logout-button:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.logout-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* The login page's main area: centres the card on the screen. */
+.login {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 32px var(--space-lg);
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: 0 12px 32px rgba(11, 42, 111, 0.08);
+  animation: lift-in 0.8s 0.2s var(--ease-out) both;
+}
+
+/* The wide letter-spacing of the chat page's title suits two capitalised
+   words, not a sentence. Here the title is set as normal heading text,
+   sized to fit the card on one line. */
+.login-card .hero-title {
+  font-size: clamp(1.2rem, 5.6vw, 1.5rem);
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  text-wrap: balance; /* if it ever wraps, split into even lines */
+}
+
+.login-card .hero-tagline {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+  margin-top: var(--space-lg);
+  text-align: left;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.form-error {
+  margin: 0;
+  padding: 10px var(--space-md);
+  font-size: 0.9rem;
+  color: #a12318;
+  background: #fdecea;
+  border: 1px solid #f5c2bd;
+  border-radius: var(--radius);
+}
+
+.login-note {
+  margin: var(--space-md) 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* ---------- 11. DASHBOARD PAGES ----------------------------
+   Shared by the Super Admin dashboard, the Admin dashboard and the
+   manage users page. */
+
+/* The control-panel layout under the header: the section list on the
+   left, the page's content on the right. min-height: 0 lets the two
+   columns scroll on their own instead of stretching the page. */
+.console {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.side-nav {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 232px;
+  padding: var(--space-lg) var(--space-md);
+  overflow-y: auto;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+}
+
+.side-heading {
+  margin: 0 0 var(--space-sm);
+  padding: 0 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.side-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: 9px 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--color-text);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+
+a.side-link:hover {
+  background: var(--color-bg);
+}
+
+a.side-link:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* The section you are on. */
+.side-link--active,
+a.side-link--active:hover {
+  color: var(--color-text-inverse);
+  background: var(--color-primary);
+}
+
+/* The page's main area scrolls, like the chat area does. */
+.manage {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-lg);
+}
+
+.manage-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+/* Beside the section list the content may use more width. */
+.console .manage-inner {
+  max-width: 1080px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  animation: rise-in 0.7s 0.2s var(--ease-out) both;
+}
+
+.page-intro {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  animation: rise-in 0.7s 0.25s var(--ease-out) both;
+}
+
+/* The number cards on a dashboard. auto-fit makes as many columns as
+   fit the width, so the same grid works on a wide screen and a phone. */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-md);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-md);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.stat-number {
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* The coloured edge says what kind of number it is. The label always
+   says it in words too, so colour is never the only signal. */
+.stat--main {
+  border-left-color: var(--color-primary);
+}
+
+.stat--pending {
+  border-left-color: var(--color-gold);
+}
+
+.stat--approved {
+  border-left-color: #2e9b5a;
+}
+
+.stat--rejected {
+  border-left-color: var(--color-accent);
+}
+
+.panel-text {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+/* A white card holding one part of the page. */
+.panel {
+  padding: var(--space-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  animation: lift-in 0.7s 0.25s var(--ease-out) both;
+}
+
+.panel-title {
+  margin: 0 0 var(--space-md);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/* Two fields per row; one per row on a phone (see Responsive). */
+.user-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+/* An item that spans the full width of the form. */
+.form-wide {
+  grid-column: 1 / -1;
+}
+
+.form-error,
+.form-success {
+  white-space: pre-line; /* one message per line */
+}
+
+.form-success {
+  margin: 0;
+  padding: 10px var(--space-md);
+  font-size: 0.9rem;
+  color: #1c6b3a;
+  background: #e8f6ee;
+  border: 1px solid #b7e0c6;
+  border-radius: var(--radius);
+}
+
+/* The form's buttons, side by side. */
+.form-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.form-actions .composer-button {
+  flex: 1;
+}
+
+/* A quieter button next to the main one (for example "Cancel"). */
+.secondary-button {
+  padding: 12px var(--space-lg);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease-out);
+}
+
+.secondary-button:hover {
+  border-color: var(--color-text-muted);
+}
+
+.secondary-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* Small buttons inside a table row ("Modify", "Delete"). */
+.row-actions {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.row-button {
+  margin-right: 6px;
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
+}
+
+.row-button:hover {
+  border-color: var(--color-primary);
+}
+
+.row-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Red marks the action that cannot be undone. */
+.row-button--danger {
+  color: #a12318;
+}
+
+.row-button--danger:hover {
+  border-color: #a12318;
+  background: #fdecea;
+}
+
+/* Green marks approval. */
+.row-button--good {
+  color: #1c6b3a;
+}
+
+.row-button--good:hover {
+  border-color: #1c6b3a;
+  background: #e8f6ee;
+}
+
+/* "Download" is a link styled as a row button. */
+a.row-button {
+  display: inline-block;
+  text-decoration: none;
+}
+
+/* A locked control (your own role and status). */
+.composer-input:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+/* A wide table scrolls sideways inside its card instead of
+   stretching the page. */
+.table-scroll {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px var(--space-sm);
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.data-table th {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table td {
+  vertical-align: top;
+}
+
+/* A cell with longer text is allowed to wrap onto several lines. */
+.data-table .cell-wrap {
+  min-width: 120px;
+  white-space: normal;
+}
+
+/* The main cell of a row (the document's title) gets more room. */
+.data-table .cell-main {
+  min-width: 190px;
+}
+
+/* Several buttons may sit on two lines instead of widening the table. */
+.data-table .row-actions {
+  min-width: 170px;
+  white-space: normal;
+}
+
+.data-table .row-actions .row-button {
+  margin-bottom: 4px;
+}
+
+.cell-title {
+  display: block;
+  font-weight: 600;
+}
+
+/* Smaller grey text under the main text of a cell. */
+.cell-note {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.cell-note--warning {
+  color: #8a5a00;
+}
+
+.empty-note {
+  margin: 0;
+  padding: var(--space-md) 0;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* A document's status. The word is always shown, so the colour is
+   never the only signal. */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: 999px;
+}
+
+.badge--pending {
+  color: #8a5a00;
+  background: #fff4dc;
+  border-color: #f3d38a;
+}
+
+.badge--approved {
+  color: #1c6b3a;
+  background: #e8f6ee;
+  border-color: #b7e0c6;
+}
+
+.badge--rejected {
+  color: #a12318;
+  background: #fdecea;
+  border-color: #f5c2bd;
+}
+
+/* The row of buttons that chooses which documents to show. */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.filter-button {
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
+}
+
+.filter-button:hover {
+  border-color: var(--color-primary);
+}
+
+.filter-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.filter-button--active {
+  color: var(--color-text-inverse);
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* The upload form. */
+textarea.composer-input {
+  resize: vertical; /* the user may make it taller, not wider */
+  line-height: 1.5;
+}
+
+.file-input {
+  padding: 10px var(--space-md);
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: var(--color-bg);
+  border: 1px dashed #c9d0da;
+  border-radius: var(--radius);
+}
+
+.file-input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* A group of tick boxes with its question above it. */
+.check-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.check-group legend {
+  margin-bottom: 6px;
+  padding: 0;
+}
+
+/* "Change readers" on the documents page: tickboxes inside a table cell. */
+.access-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.access-editor-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary);
+}
+
+/* ---------- 12. KEYFRAMES ---------------------------------
+   Every keyframe below animates only `transform` and `opacity`.
+   Those two are the properties a browser can change without
+   re-calculating the page layout, which keeps motion smooth. */
+
+/* Background logo: drifts up, grows very slightly, turns a couple of
+   degrees, brightens a little, then returns. One loop takes 44s. */
+@keyframes narada-drift {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 0.045;
+  }
+  50% {
+    transform: translate(-50%, -54%) scale(1.06) rotate(2.5deg);
+    opacity: 0.07;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 0.045;
+  }
+}
+
+/* The coloured glows shift slowly in the opposite direction. */
+@keyframes ambient-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(2.5%, -3%, 0) scale(1.08);
+  }
+}
+
+@keyframes veil-out {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fade upward into place. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The composer rises and settles from very slightly small. */
+@keyframes lift-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The red rule draws outward from its centre. */
+@keyframes draw-rule {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* The "Thinking..." text fades gently in and out. */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes message-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- 13. RESPONSIVE -------------------------------- */
+
+/* Tablets and phones: there is no room for a column of sections, so
+   the section list becomes a row across the top that scrolls sideways. */
+@media (max-width: 820px) {
+  .console {
+    flex-direction: column;
+  }
+
+  .side-nav {
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    padding: var(--space-sm) var(--space-md);
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .side-heading {
+    display: none;
+  }
+
+  /* The chat page: recent chats become a row of buttons above the
+     conversation, scrolling sideways like the dashboards' sections. */
+  .chat-layout {
+    flex-direction: column;
+  }
+
+  .new-chat-button {
+    margin-bottom: 0;
+  }
+
+  .history-list {
+    flex-direction: row;
+    gap: var(--space-sm);
+  }
+
+  .history-row {
+    flex-shrink: 0;
+    max-width: 210px;
+  }
+
+  .clear-history-button {
+    margin-top: 0;
+    white-space: nowrap;
+  }
+
+  .history-empty {
+    white-space: nowrap;
+  }
+}
+
+/* Applies only when the screen is 600px wide or narrower. */
+@media (max-width: 600px) {
+  .chat,
+  .manage,
+  .composer {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+
+  .panel {
+    padding: var(--space-md);
+  }
+
+  /* One form field per row. */
+  .user-form {
+    grid-template-columns: 1fr;
+  }
+
+  .app-header {
+    gap: var(--space-sm);
+    padding: 8px var(--space-md);
+  }
+
+  .upes-logo {
+    height: 30px; /* never oversized on a phone */
+  }
+
+  .product-name {
+    font-size: 0.85rem;
+  }
+
+  /* A phone header cannot fit everything. On the chat page the role and
+     the logout button matter most, so the user's name and the product
+     name (already shown by the UPES logo and the page itself) give way. */
+  .user-name,
+  .app-header--with-user .header-divider,
+  .app-header--with-user .product-name {
+    display: none;
+  }
+
+  .message {
+    max-width: 90%; /* use more of the narrow screen */
+  }
+
+  .composer-button {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+}
+
+/* ---------- 14. REDUCED MOTION ----------------------------
+   Some people get dizzy or unwell from moving interfaces, and set
+   "reduce motion" in their operating system. The browser reports
+   that here. Animations collapse to nothing, so every element still
+   ends up in its final, visible position — the page works fully,
+   it simply does not move. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
